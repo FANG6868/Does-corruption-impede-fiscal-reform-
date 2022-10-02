@@ -88,9 +88,9 @@ class Baidu_spider(object):
         }
         city,county=area.split(',')
         try:
-            return BaiduIndexCitiesCode[county]#返回城市编码
+            return BaiduIndexCitiesCode[county]
         except:
-            print('请输入正确的城市')#如果报错可以看下BaiduIndexCitiesCode里面城市是不是有
+            print('请输入正确的城市')
             return None
     def get_html(self,url):
         headers = {
