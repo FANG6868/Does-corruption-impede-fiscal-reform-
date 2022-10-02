@@ -108,7 +108,7 @@ class Baidu_spider(object):
             print('请求错误')
         return response.text
 
-    def decrypt(self,t, e):  # 解密
+    def decrypt(self,t, e):  
         n = list(t)
         a = {}
         result = []
@@ -126,15 +126,15 @@ class Baidu_spider(object):
         resp = self.get_html(url.format(uniqid))
         return json.loads(resp)['data']
 
-    def get_data(self):  # 获取百度接口搜索数据
+    def get_data(self):  
         if self.area is not None:
             url = "https://index.baidu.com/api/SearchApi/index?area={}&word=[[%7B%22name%22:%22{}%22,%22wordType%22:1%7D]]&startDate={}&endDate={}".format(
                 self.area, self.keyword, self.start_date, self.end_date)
-            data = self.get_html(url)  # 百度趋势接口返回数据
-            data = json.loads(data)  # 数据加密需要解密
+            data = self.get_html(url)  
+            data = json.loads(data)  
             uniqid = data['data']['uniqid']
             data = data['data']['userIndexes'][0]['all']['data']
-            ptbk = self.get_ptbk(uniqid)  # 解密需要的参数
+            ptbk = self.get_ptbk(uniqid)  
             result = self.decrypt(ptbk, data)
             result = result.split(',')
             start = self.start_date.split("-")
@@ -147,7 +147,7 @@ class Baidu_spider(object):
             area_county_list=[]
             data_list = []
             num_list = []
-            for i in range(a.toordinal(), b.toordinal()):#每日数据保存为列表
+            for i in range(a.toordinal(), b.toordinal()):
                 date = datetime.date.fromordinal(i)
                 keyword_list.append(self.keyword)
                 area_city_list.append(self.area_name_city)
@@ -155,14 +155,14 @@ class Baidu_spider(object):
                 data_list.append(date)
                 num_list.append(result[node])
                 node += 1
-            df = pd.DataFrame(keyword_list, columns=['关键词'])#存储数据
+            df = pd.DataFrame(keyword_list, columns=['关键词'])
             df.insert(df.shape[1], '省', area_city_list)
             df.insert(df.shape[1], '市', area_county_list)
             df.insert(df.shape[1], '时间', data_list)
             df.insert(df.shape[1], '指数', num_list)
             try:
                 df1 = pd.DataFrame(pd.read_excel('百度指数.xlsx', sheet_name='Sheet1'))  #
-                df2 = pd.concat([df1, df], axis=0)  # 纵向合并 时间会变多00：00：00
+                df2 = pd.concat([df1, df], axis=0)  
                 df2.to_excel('百度指数.xlsx', index=False)
             except Exception as e:
                 df.to_excel('百度指数.xlsx', index=False)
@@ -170,6 +170,6 @@ if __name__ == '__main__':
     keyword = "贪污"
     start_date = "2017-01-01"
     end_date =   "2017-12-31"
-    area = '江苏省,大庆市'
+    area = '江苏省,扬州市'
     baidu_spider=Baidu_spider(keyword, start_date, end_date, area)
     baidu_spider.get_data()
